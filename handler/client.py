@@ -1,10 +1,13 @@
 from aiogram import types, Dispatcher
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from config import bot, db
-
+from KEYBOARD.client_kb import start_markup
 async def start_handler(message: types.Message):
-        await bot.send_message(message.from_user.id, f'hello {message.from_user.first_name}')
+        await bot.send_message(message.from_user.id, f'hello {message.from_user.first_name}',
+                                reply_markup=start_markup)
         await message.answer('пока что все')
+        #await message.reply(message.from_user.first_name)
+
 
 @db.message_handler(commands=['quiz'])
 async def quiz1(message:types.Message):
@@ -31,5 +34,5 @@ async def quiz1(message:types.Message):
     )
 
 def reg_client(db:Dispatcher):
-    db.register_message_handler(start_handler,commands=['hello'])
+    db.register_message_handler(start_handler,commands=['hello', 'start'])
     db.register_message_handler(quiz1,commands=['quiz'])
