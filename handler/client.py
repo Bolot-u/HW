@@ -1,9 +1,11 @@
-from aiogram import Bot, Dispatcher, types
-from decouple import config
+from aiogram import types, Dispatcher
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-TOKEN = config('TOKEN')
-bot = Bot(TOKEN)
-db = Dispatcher(bot=bot)
+from config import bot, db
+
+async def start_handler(message: types.Message):
+        await bot.send_message(message.from_user.id, f'hello {message.from_user.first_name}')
+        await message.answer('пока что все')
+
 @db.message_handler(commands=['quiz'])
 async def quiz1(message:types.Message):
     markup = InlineKeyboardMarkup()
@@ -27,22 +29,7 @@ async def quiz1(message:types.Message):
         correct_option_id=2,
         reply_markup=markup
     )
-@db.callback_query_handler(text='button')
-async def quiz2(call:types.CallbackQuery):
-    ques = 'Откуда этот мем?'
-    answer = [
-        'Марсианин',
-        'Пришелец',
-        'Интерстеллер',
-        'Интерстеллар',
-    ]
-    photo = open('media/000844262097a8048f553a5b0dbb083a.jpg', 'rb')
-    await bot.send_photo(call.from_user.id,photo=photo)
-    await bot.send_poll(
-        chat_id=call.from_user.id,
-        question=ques,
-        options=answer,
-        is_anonymous=False,
-        type='quiz',
-        correct_option_id=3,
-    )
+
+def reg_client(db:Dispatcher):
+    db.register_message_handler(start_handler,commands=['hello'])
+    db.register_message_handler(quiz1,commands=['quiz'])
